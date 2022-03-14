@@ -47,6 +47,10 @@ Features compute_features(const float *x, int N) {
   feat.zcr = compute_zcr(x,N,16000);
   feat.am = compute_am(x,N);
   feat.p = compute_power(x,N);
+  printf("P - %f\nA - %f\nZ - %f\n",feat.p,feat.am,feat.zcr);
+  char *c;
+  scanf("%s\n",c);
+  fflush(stdin);
   return feat;
 }
 
