@@ -5,7 +5,9 @@
 #include "pav_analysis.h"
 #include "vad.h"
 
-const float FRAME_TIME = 10.0F; /* in ms. */
+//const float FRAME_TIME = 10.0F; /* in ms. */
+const float FRAME_TIME = 80.0F; /* in ms. */
+
 
 /* 
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
