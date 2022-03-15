@@ -1,6 +1,9 @@
 /*/
+personal_token_github
 
 !/docopt_c/
 !/scripts/
 !/src/
 !/img/
+!.gitignore
+!.wav
