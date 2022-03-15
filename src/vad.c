@@ -15,7 +15,7 @@ const float FRAME_TIME = 30.0F; /* in ms. */
  */
 
 const char *state_str[] = {
-  "UNDEF", "S", "V", "INIT", "MAY_S", "MAY_V"
+  "UNDEF", "S", "V", "INIT", "MS", "MV"
 };
 
 const char *state2str(VAD_STATE st) {
