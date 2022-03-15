@@ -6,7 +6,7 @@
 #include "vad.h"
 
 //const float FRAME_TIME = 10.0F; /* in ms. */
-const float FRAME_TIME = 80.0F; /* in ms. */
+const float FRAME_TIME = 30.0F; /* in ms. */
 
 /* 
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
@@ -15,7 +15,7 @@ const float FRAME_TIME = 80.0F; /* in ms. */
  */
 
 const char *state_str[] = {
-  "UNDEF", "S", "V", "INIT"
+  "UNDEF", "S", "V", "INIT", "MAY_S", "MAY_V"
 };
 
 const char *state2str(VAD_STATE st) {
@@ -111,6 +111,22 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     break;
 
   case ST_UNDEF:
+    break;
+
+  case ST_MAYBE_S:
+    if (f.p > vad_data->p1) { //condicion para ir de maybe silence a voice 
+      vad_data->state = ST_VOICE;
+    } else if (f.p > vad_data->p1) { //condicion para ir de maybe silence a silence
+      vad_data->state = ST_SILENCE;
+    } //sino se queda en Maybe silence
+    break;
+
+  case ST_MAYBE_V:
+    if (f.p > vad_data->p1) { //condicion para ir de maybe voice a voice 
+      vad_data->state = ST_VOICE;
+    } else if (f.p > vad_data->p1) { //condicion para ir de maybe voice a silence
+      vad_data->state = ST_SILENCE;
+    } //sino se queda en Maybe silence
     break;
   }
 

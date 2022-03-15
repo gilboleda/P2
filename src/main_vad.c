@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
   VAD_DATA *vad_data;
   VAD_STATE state, last_state;
 
-  float alpha1;
+  float alpha1, pot_noise, pot_max = -90.0;
   float *buffer, *buffer_zeros;
   int frame_size;         /* in samples */
   float frame_duration;   /* in seconds */
