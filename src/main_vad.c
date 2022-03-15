@@ -94,7 +94,6 @@ int main(int argc, char *argv[]) {
     }
 
     if (sndfile_out != 0) {
-      //Prova canvi codi per pujar amb token
       /* TODO: go back and write zeros in silence segments */
     }
   }
