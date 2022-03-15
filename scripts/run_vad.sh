@@ -1,12 +1,16 @@
 #!/bin/bash
-
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 alpha1"
+    exit -1
+fi
+alpha1=$1
 # Be sure that this file has execution permissions:
 # Use the nautilus explorer or chmod +x run_vad.sh
 
 # Write here the name and path of your program and database
 DIR_P2=$HOME/PAV/P2
 DB=$DIR_P2/db.v4
-CMD=$DIR_P2/"bin/vad --alpha=5"
+CMD="$DIR_P2/bin/vad --alpha=$alpha1"
 
 for filewav in $DB/*/*wav; do
 #    echo
