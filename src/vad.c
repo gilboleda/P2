@@ -7,6 +7,9 @@
 
 //const float FRAME_TIME = 10.0F; /* in ms. */
 const float FRAME_TIME = 80.0F; /* in ms. */
+const int NUM_WIND_INIT = 4; //Finestres que agafarà al inici per calcular els parametres del soroll
+int num_w = 0;
+float power_init_avg = 0;
 
 /* 
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
@@ -15,7 +18,7 @@ const float FRAME_TIME = 80.0F; /* in ms. */
  */
 
 const char *state_str[] = {
-  "UNDEF", "S", "V", "INIT", "MS", "MV"
+  "UNDEF", "S", "V", "INIT", "M"
 };
 
 const char *state2str(VAD_STATE st) {
@@ -31,8 +34,8 @@ typedef struct {
 
 /* 
  * TODO: Delete and use your own features!
+ * DONE
  */
-
 Features compute_features(const float *x, int N) {
   /*
    * Input: x[i] : i=0 .... N-1 
@@ -54,6 +57,7 @@ Features compute_features(const float *x, int N) {
 
 /* 
  * TODO: Init the values of vad_data
+ * DONE
  */
 
 VAD_DATA * vad_open(float rate, float alpha1) {
@@ -62,6 +66,8 @@ VAD_DATA * vad_open(float rate, float alpha1) {
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
   vad_data->alpha1 = alpha1;
+  vad_data->alpha2 = alpha1; //despres canviem
+  vad_data->pmax = -200;
   return vad_data;
 }
 
@@ -94,41 +100,57 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   Features f = compute_features(x, vad_data->frame_length);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
 
+  if (f.p > vad_data->pmax) {
+    vad_data->pmax = f.p;
+    vad_data->p2 = vad_data->pmax - vad_data->alpha2;
+  }
+
   switch (vad_data->state) {
   case ST_INIT:
-    vad_data->state = ST_SILENCE;
-    vad_data->p1 = f.p + vad_data->alpha1; //prova
+    if (num_w < NUM_WIND_INIT) {
+      power_init_avg = power_init_avg + f.p / NUM_WIND_INIT; 
+      num_w = num_w + 1;
+    } else {
+      vad_data->state = ST_SILENCE;
+      vad_data->p1 = power_init_avg + vad_data -> alpha1; //prova
+    }
     break;
 
   case ST_SILENCE:
-    if (f.p > vad_data->p1)
+    if (f.p > vad_data->p2) {
       vad_data->state = ST_VOICE;
+    } else if(f.p > vad_data->p1) {
+      vad_data->state = ST_MAYBE;
+    }
     break;
 
   case ST_VOICE:
-    if (f.p < vad_data->p1)
+    if (f.p < vad_data->p1) {
       vad_data->state = ST_SILENCE;
+    } else if(f.p < vad_data->p2) {
+      vad_data->state = ST_MAYBE;
+    }
     break;
 
   case ST_UNDEF:
     break;
 
-  /*case ST_MAYBE_S:
+  case ST_MAYBE:
+    if (f.p > vad_data->p2) { //condicion para ir de maybe voice a voice 
+      vad_data->state = ST_VOICE;
+    } else if (f.p < vad_data->p1) { //condicion para ir de maybe voice a silence
+      vad_data->state = ST_SILENCE;
+    } //sino se queda en Maybe silence
+    break;
+
+/*  case ST_MAYBE_S:
     if (f.p > vad_data->p1) { //condicion para ir de maybe silence a voice 
       vad_data->state = ST_VOICE;
     } else if (f.p > vad_data->p1) { //condicion para ir de maybe silence a silence
       vad_data->state = ST_SILENCE;
     } //sino se queda en Maybe silence
     break;
-
-  case ST_MAYBE_V:
-    if (f.p > vad_data->p1) { //condicion para ir de maybe voice a voice 
-      vad_data->state = ST_VOICE;
-    } else if (f.p > vad_data->p1) { //condicion para ir de maybe voice a silence
-      vad_data->state = ST_SILENCE;
-    } //sino se queda en Maybe silence
-    break;
-  }*/
+*/
   }
   if (vad_data->state == ST_SILENCE ||
       vad_data->state == ST_VOICE)
