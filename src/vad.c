@@ -6,7 +6,7 @@
 #include "vad.h"
 
 //const float FRAME_TIME = 10.0F; /* in ms. */
-const float FRAME_TIME = 30.0F; /* in ms. */
+const float FRAME_TIME = 80.0F; /* in ms. */
 
 /* 
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
@@ -129,7 +129,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     } //sino se queda en Maybe silence
     break;
   }*/
-
+  }
   if (vad_data->state == ST_SILENCE ||
       vad_data->state == ST_VOICE)
     return vad_data->state;
