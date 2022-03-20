@@ -21,6 +21,15 @@ typedef struct {
   float alpha1, alpha2;
 } VAD_DATA;
 
+/* Define a datatype with interesting features */
+typedef struct {
+  float zcr;
+  float p;
+  float am;
+} Features;
+
+Features compute_features(const float *x, int N);
+
 /* Call this function before using VAD: 
    It should return allocated and initialized values of vad_data
 

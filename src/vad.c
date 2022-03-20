@@ -6,7 +6,7 @@
 #include "vad.h"
 
 //const float FRAME_TIME = 10.0F; /* in ms. */
-const float FRAME_TIME = 80.0F; /* in ms. */
+const float FRAME_TIME = 30.0F; /* in ms. */
 const int NUM_WIND_INIT = 4; //Finestres que agafarà al inici per calcular els parametres del soroll
 int num_w = 0;
 float power_init_avg = 0;
@@ -15,27 +15,20 @@ float power_init_avg = 0;
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
  * only this labels are needed. You need to add all labels, in case
  * you want to print the internal state in string format
- */
+*/
 
 const char *state_str[] = {
-  "UNDEF", "S", "V", "INIT", "M"
+  "UNDEF", "S", "V", "INIT", "S"
 };
 
 const char *state2str(VAD_STATE st) {
   return state_str[st];
 }
 
-/* Define a datatype with interesting features */
-typedef struct {
-  float zcr;
-  float p;
-  float am;
-} Features;
-
 /* 
  * TODO: Delete and use your own features!
  * DONE
- */
+*/
 Features compute_features(const float *x, int N) {
   /*
    * Input: x[i] : i=0 .... N-1 
@@ -45,7 +38,7 @@ Features compute_features(const float *x, int N) {
    * DELETE and include a call to your own functions
    *
    * For the moment, compute random value between 0 and 1 
-   */
+  */
   Features feat;
   //feat.zcr = feat.p = feat.am = (float) rand()/RAND_MAX;
   feat.zcr = compute_zcr(x,N,16000);
@@ -58,7 +51,7 @@ Features compute_features(const float *x, int N) {
 /* 
  * TODO: Init the values of vad_data
  * DONE
- */
+*/
 
 VAD_DATA * vad_open(float rate, float alpha1, float alpha2) {
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
@@ -67,7 +60,7 @@ VAD_DATA * vad_open(float rate, float alpha1, float alpha2) {
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
   vad_data->alpha1 = alpha1;
   vad_data->alpha2 = alpha2; //despres canviem
-  vad_data->pmax = -200;
+  vad_data->pmax = 0;
   return vad_data;
 }
 
@@ -88,22 +81,17 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
 /* 
  * TODO: Implement the Voice Activity Detection 
  * using a Finite State Automata
- */
+*/
 
 VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
   /* 
    * TODO: You can change this, using your own features,
    * program finite state automaton, define conditions, etc.
-   */
+  */
 
   Features f = compute_features(x, vad_data->frame_length);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
-
-  if (f.p > vad_data->pmax) {
-    vad_data->pmax = f.p;
-    vad_data->p2 = vad_data->pmax - vad_data->alpha2;
-  }
 
   switch (vad_data->state) {
   case ST_INIT:
@@ -112,7 +100,8 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
       num_w = num_w + 1;
     } else {
       vad_data->state = ST_SILENCE;
-      vad_data->p1 = power_init_avg + vad_data -> alpha1; //prova
+      vad_data->p1 = (vad_data->pmax - power_init_avg) * vad_data->alpha1 + power_init_avg; //prova
+      vad_data->p2 = vad_data->pmax - ((vad_data->pmax - power_init_avg) * vad_data->alpha2);
     }
     break;
 
@@ -153,8 +142,11 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 */
   }
   if (vad_data->state == ST_SILENCE ||
-      vad_data->state == ST_VOICE)
+      vad_data->state == ST_VOICE ||
+      vad_data->state == ST_MAYBE) //despues se quita
     return vad_data->state;
+  else if (vad_data->state == ST_INIT)
+    return ST_SILENCE;
   else
     return ST_UNDEF;
 }
