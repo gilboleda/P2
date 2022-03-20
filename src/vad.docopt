@@ -9,7 +9,8 @@ Options:
    -i FILE, --input-wav=FILE   WAVE file for voice activity detection
    -o FILE, --output-vad=FILE  Label file with the result of VAD
    -w FILE, --output-wav=FILE  WAVE file with silences cleared
-   -1 FLOAT, --alpha1=FLOAT    Increment per determinar un llindar de decisió [default: 10]
+   -1 FLOAT, --alpha1=FLOAT    Increment per determinar un llindar de decisió [default: 5]
+   -2 FLOAT, --alpha2=FLOAT    Increment per determinar el llindar superior [default: 20]
    -v, --verbose  Show debug information
    -h, --help     Show this screen
    --version      Show the version of the project

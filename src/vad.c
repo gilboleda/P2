@@ -18,7 +18,7 @@ float power_init_avg = 0;
  */
 
 const char *state_str[] = {
-  "UNDEF", "S", "V", "INIT", "M"
+  "S", "S", "V", "INIT", "M"
 };
 
 const char *state2str(VAD_STATE st) {
@@ -60,13 +60,13 @@ Features compute_features(const float *x, int N) {
  * DONE
  */
 
-VAD_DATA * vad_open(float rate, float alpha1) {
+VAD_DATA * vad_open(float rate, float alpha1, float alpha2) {
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
   vad_data->alpha1 = alpha1;
-  vad_data->alpha2 = alpha1; //despres canviem
+  vad_data->alpha2 = alpha2; //despres canviem
   vad_data->pmax = -200;
   return vad_data;
 }
@@ -120,7 +120,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     if (f.p > vad_data->p2) {
       vad_data->state = ST_VOICE;
     } else if(f.p > vad_data->p1) {
-      vad_data->state = ST_MAYBE;
+      //vad_data->state = ST_MAYBE;
     }
     break;
 
@@ -128,7 +128,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     if (f.p < vad_data->p1) {
       vad_data->state = ST_SILENCE;
     } else if(f.p < vad_data->p2) {
-      vad_data->state = ST_MAYBE;
+      //vad_data->state = ST_MAYBE;
     }
     break;
 
