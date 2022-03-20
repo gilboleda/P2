@@ -221,10 +221,22 @@ int main(int argc, char *argv[]) {
 
 
   state = vad_close(vad_data);
+  int canvis[50],cont=0;
   /* TODO: what do you want to print, for last frames? */
+  for(i = 0; i < t-1; i++){
+    if (estats_filtrats[i] + estats_filtrats[i+1] == 1) {
+      canvis[cont] = i;
+      cont++;
+    }
+  }
+  for(i = 0; i < cont - 1; i++){
+    fprintf(vadfile, "%.5f\t%.5f\t%s\n", canvis[i] * frame_duration, canvis[i+1] * frame_duration, state2str(estats_filtrats[canvis[i]]+1));    
+  }
+  
+  /*
   if (t != last_t)
     fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration + n_read / (float) sf_info.samplerate, state2str(state));
-
+  */
   /* clean up: free memory, close open files */
   free(buffer);
   free(buffer_zeros);
