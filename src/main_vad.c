@@ -17,7 +17,8 @@ int main(int argc, char *argv[]) {
   int n_read = 0, n_write = 0, i, k, l;
 
   VAD_DATA *vad_data;
-  VAD_STATE state, last_state, *tots = 0;
+  VAD_STATE state, last_state;
+  int tots[200], *estats, *estats_filtrats;
 
   float alpha1, alpha2, aux;
   float *buffer, *buffer_zeros;
@@ -104,7 +105,13 @@ int main(int argc, char *argv[]) {
     */
   } //tambe podem fer mitjana noseke, TODO, DONE
   //hacer la media y ponerla en fmax dentro de vad_data
+
+  estats            = (int *) malloc(t * sizeof(int));
+  estats_filtrats   = (int *) malloc(t * sizeof(int));
+
+
   for(k = 0; k < num_maxs; k++) vad_data->pmax = vad_data->pmax + pmax[k]/num_maxs;
+  printf("PMAX - %f\n", vad_data->pmax);
 
   //tanquem l'audio i el tronem a obrir
   //podem substituir amb la funcio sf_seek() pero no ens sortia i voliem seguir provant
@@ -116,10 +123,16 @@ int main(int argc, char *argv[]) {
 
   //Segona pasada per acabar de decidir els estats
   for (t = last_t = 0; ; t++) { /* For each frame ... */
+    //printf(" - Trama %i\n", t);
     /* End loop when file has finished (or there is an error) */
     if  ((n_read = sf_read_float(sndfile_in, buffer, frame_size)) != frame_size) break;
+
     state = vad(vad_data, buffer);
-    tots[t] = state;
+    //printf("Fins aqui\n");
+    tots[t] = (state == ST_VOICE) ? 1 : 0;
+    estats[t] = (state == ST_VOICE) ? 1 : 0;  
+    //printf("%i", tots[t]);
+    //tots[trama] = state;
     if (verbose & DEBUG_VAD) vad_show_state(vad_data, stdout);
 
     /* TODO: print only SILENCE and VOICE labels */
@@ -140,11 +153,71 @@ int main(int argc, char *argv[]) {
       }
     }
   }
+  /*
+  printf("En principi ho ha fet tot\n");
+  for (i = 0; i < t; i++)
+    printf("%i",estats[i]);
+*/
 
-  for (i = 0; i < t; i++){
-    printf("%i",tots[t]);
+  //filtro de mediana
+  int error_median = 2, j, mitjana=0;
+  int buffer_median[2*error_median+1];
+
+  for (i = 0; i < error_median; i++){
+    estats_filtrats[i] = estats[i];
   }
 
+
+  for (k = 0; k < 2 * error_median + 1; k++) {
+    buffer_median[k] = tots[k];
+  }
+  j = 0;
+  for(i = error_median; i < t-1-error_median; i++) {
+    for (k = 0; k < 2 * error_median + 1; k++) {
+      mitjana = mitjana + buffer_median[k];
+      //printf("%i ", buffer_median[k]);
+    }
+    estats_filtrats[i - error_median - 1] = (mitjana <= error_median) ? 0 : 1;
+    mitjana = 0;
+    //printf(" - %i\n",estats_filtrats[i]);
+    j = (j+1) % (2*error_median+1);
+    buffer_median[j] = tots[i];
+  }
+
+/* Codi a mitges per fer un filtre de mediana real, no un apaño només per a zeros i uns, no cal acabar, tampoc funciona bé
+    for (i = 0; i < 2*error_median + 1; i++)
+      printf("%i ",tots[i]);
+    printf("\n");
+
+  for(i = error_median; i < 200-1-error_median; i++) {
+    for(k = 0; k < 2 * error_median + 1; k++) {
+      nou = tots[i - error_median + k];
+      if (k==0){
+        buff_median[k] = nou;
+      } else {
+        for(l=0; l < k; l++){
+          if(nou < buff_median[l]) break; //s'ha de ficar a la posició l
+        }
+        for (j = l ; j <= k; l++) {
+          a = buff_median[l];
+          buff_median[l] = nou;
+          nou = a;
+        }
+      }
+    }
+  
+    for (i = 0; i < 2*error_median + 1; i++)
+      printf("%i ",tots[i]);
+    printf("\n");
+    tots[i] = buffer_median[error_median];
+  }
+  */
+
+/*
+  printf("\n\nTots filtrat\n");
+  for (i = 0; i < t; i++)
+    printf("%i",estats_filtrats[i]);
+*/
 
 
   state = vad_close(vad_data);
