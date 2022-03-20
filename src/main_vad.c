@@ -76,6 +76,8 @@ int main(int argc, char *argv[]) {
   frame_duration = (float) frame_size/ (float) sf_info.samplerate;
   last_state = ST_UNDEF;
 
+
+  //Primera pasada, establir els valor minims i maxims per als dos llindars p1 i p2
   for (t = last_t = 0; ; t++) { /* For each frame ... */
     /* End loop when file has finished (or there is an error) */
     if  ((n_read = sf_read_float(sndfile_in, buffer, frame_size)) != frame_size) break;
@@ -101,6 +103,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  //Segona pasada per acabar de decidir el
   for (t = last_t = 0; ; t++) { /* For each frame ... */
     /* End loop when file has finished (or there is an error) */
     if  ((n_read = sf_read_float(sndfile_in, buffer, frame_size)) != frame_size) break;
