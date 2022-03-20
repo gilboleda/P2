@@ -18,7 +18,7 @@ float power_init_avg = 0;
  */
 
 const char *state_str[] = {
-  "S", "S", "V", "INIT", "M"
+  "UNDEF", "S", "V", "INIT", "M"
 };
 
 const char *state2str(VAD_STATE st) {
