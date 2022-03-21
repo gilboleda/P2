@@ -129,13 +129,13 @@ Ejercicios
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 
   
-
-
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
+  Hay un pequeño error el la detección automática y por lo tanto no coinciden perfectamente.
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
   el resumen).
+  Evaluando sobre esta base de datos hemos conseguido una tasa de 95.479%
 
 
 ### Trabajos de ampliación
