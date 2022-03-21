@@ -29,6 +29,10 @@ int main(int argc, char *argv[]) {
   unsigned int t, last_t; /* in frames */
   Features cond_ini;
 
+  int error_median = 3, j, mitjana=0;
+  int buffer_median[2*error_median+1];
+
+
   char	*input_wav, *output_vad, *output_wav;
 
   DocoptArgs args = docopt(argc, argv, /* help */ 1, /* version */ "2.0");
@@ -162,9 +166,6 @@ int main(int argc, char *argv[]) {
 */
 
   //filtro de mediana
-  int error_median = 2, j, mitjana=0;
-  int buffer_median[2*error_median+1];
-
   for (i = 0; i < error_median; i++){
     estats_filtrats[i] = estats[i];
   }

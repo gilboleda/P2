@@ -6,7 +6,7 @@
 #include "vad.h"
 
 //const float FRAME_TIME = 10.0F; /* in ms. */
-const float FRAME_TIME = 45.0F; /* in ms. */
+const float FRAME_TIME = 38.0F; /* in ms. */
 const int NUM_WIND_INIT = 4; //Finestres que agafarà al inici per calcular els parametres del soroll
 int num_w = 0;
 float power_init_avg = 0;
