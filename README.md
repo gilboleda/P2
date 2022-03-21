@@ -128,6 +128,7 @@ Ejercicios
 
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 
+  
 
 
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
@@ -155,6 +156,8 @@ Ejercicios
 
 - Indique a continuación si ha realizado algún tipo de aportación suplementaria (algoritmos de detección o 
   parámetros alternativos, etc.).
+  Hemos aplicado un post-procesado con un filtro de mediana para un cierto numero n de tramas que nos corrige 
+  2*n +1 tramas.
 
 - Si lo desea, puede realizar también algún comentario acerca de la realización de la práctica que
   considere de interés de cara a su evaluación.
