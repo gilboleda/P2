@@ -31,6 +31,7 @@ int main(int argc, char *argv[]) {
 
   int buffer_median[2*error_median+1];
   float t_final;
+  int canvis[50],cont=0; 
 
   char	*input_wav, *output_vad, *output_wav;
 
@@ -99,7 +100,7 @@ int main(int argc, char *argv[]) {
         cond_ini.p = aux;
       }
     }
-    /* Chivato para ver que hemos recolectado bien las 5 muestras mayores en orden
+    /* Chivato para ver que hemos recolectado bien las 5 muestras mayores en orden (estamos orgullosos del codigo)
     printf("\tPmax - [ ");
     for(k = 0; k < num_maxs; k++) printf("%f , ", pmax[k]);
     printf("]\n");
@@ -163,7 +164,7 @@ int main(int argc, char *argv[]) {
   }
 
   //Escojer estado en funcion del vector de unos y ceros filtrado
-  int canvis[50],cont=0;
+  //com a maxim podra detectar 50 canvis de veu-silenci, es pot canviar
   for(i = 0; i < t-1; i++){
     if (estats_filtrats[i] + estats_filtrats[i+1] == 1) {
       canvis[cont] = i + 1;
