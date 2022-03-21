@@ -14,24 +14,23 @@ int main(int argc, char *argv[]) {
   SNDFILE *sndfile_in, *sndfile_out = 0;
   SF_INFO sf_info;
   FILE *vadfile;
-  int n_read = 0, n_write = 0, i, k, l;
+  int n_read = 0, n_write = 0, i, j, k, l;
 
   VAD_DATA *vad_data;
-  VAD_STATE state, last_state;
-  int tots[200], *estats, *estats_filtrats;
+  VAD_STATE state;
+  int *estats, *estats_filtrats;
 
   float alpha1, alpha2, aux;
   float *buffer, *buffer_zeros;
-  int num_maxs = 9;
+  int num_maxs = 9, error_median = 3, mitjana=0;
   float pmax[] = {-208.0,-207.0,-206.0,-205.0,-204.0,-203.0,-202.0,-201.0,-200.0};
   int frame_size;         /* in samples */
   float frame_duration;   /* in seconds */
   unsigned int t, last_t; /* in frames */
   Features cond_ini;
 
-  int error_median = 3, j, mitjana=0;
   int buffer_median[2*error_median+1];
-
+  float t_final;
 
   char	*input_wav, *output_vad, *output_wav;
 
@@ -82,8 +81,6 @@ int main(int argc, char *argv[]) {
   for (i=0; i< frame_size; ++i) buffer_zeros[i] = 0.0F;
 
   frame_duration = (float) frame_size/ (float) sf_info.samplerate;
-  last_state = ST_UNDEF;
-
 
   //Primera pasada, establir els valor minims i maxims per als dos llindars p1 i p2
   for (t = last_t = 0; ; t++) { /* For each frame ... */
@@ -108,11 +105,9 @@ int main(int argc, char *argv[]) {
     printf("]\n");
     */
   } //tambe podem fer mitjana noseke, TODO, DONE
-  //hacer la media y ponerla en fmax dentro de vad_data
 
   estats            = (int *) malloc(t * sizeof(int));
   estats_filtrats   = (int *) malloc(t * sizeof(int));
-  //t_final = t * 
 
 
   for(k = 0; k < num_maxs; k++) vad_data->pmax = vad_data->pmax + pmax[k]/num_maxs;
@@ -133,23 +128,12 @@ int main(int argc, char *argv[]) {
     if  ((n_read = sf_read_float(sndfile_in, buffer, frame_size)) != frame_size) break;
 
     state = vad(vad_data, buffer);
-    //printf("Fins aqui\n");
-    //tots[t] = (state == ST_VOICE) ? 1 : 0;
     estats[t] = (state == ST_VOICE) ? 1 : 0;  
-    //printf("%i", tots[t]);
-    //tots[trama] = state;
+
     if (verbose & DEBUG_VAD) vad_show_state(vad_data, stdout);
 
     /* TODO: print only SILENCE and VOICE labels */
     /* As it is, it prints UNDEF segments but is should be merge to the proper value */
-    /*
-    if (state != last_state) {
-      if (t != last_t && (state == ST_SILENCE || state == ST_VOICE))
-        fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration, state2str(last_state));
-      last_state = state;
-      last_t = t;
-    }
-  */
     if (sndfile_out != 0) {
       if (state == ST_VOICE) {
         if ((n_write = sf_write_float(sndfile_out, buffer, frame_size)) != frame_size) break;
@@ -159,61 +143,26 @@ int main(int argc, char *argv[]) {
       }
     }
   }
-  /*
-  printf("En principi ho ha fet tot\n");
-  for (i = 0; i < t; i++)
-    printf("%i",estats[i]);
-*/
 
   //filtro de mediana
-  for (i = 0; i < error_median; i++){
+  for (i = 0; i < error_median; i++){ //els primers dos valors seran els mateixos
     estats_filtrats[i] = estats[i];
   }
-  for (k = 0; k < 2 * error_median + 1; k++) {
+  for (k = 0; k < 2 * error_median + 1; k++) { //posem els 5 primers al buffer i fem una especie de circular queue
     buffer_median[k] = estats[k];
   }
   j = 0;
-  for(i = error_median; i < t-1-error_median; i++) {
+  for(i = error_median; i < t-1-error_median; i++) { //no cal fer la mediana tal cual ja que son només 0 i 1
     for (k = 0; k < 2 * error_median + 1; k++) {
       mitjana = mitjana + buffer_median[k];
-      //printf("%i ", buffer_median[k]);
     }
     estats_filtrats[i - error_median - 1] = (mitjana <= error_median) ? 0 : 1;
     mitjana = 0;
-    //printf(" - %i\n",estats_filtrats[i]);
     j = (j+1) % (2*error_median+1);
     buffer_median[j] = estats[i];
   }
 
-/* Codi a mitges per fer un filtre de mediana real, no un apaño només per a zeros i uns, no cal acabar, tampoc funciona bé
-    for (i = 0; i < 2*error_median + 1; i++)
-      printf("%i ",tots[i]);
-    printf("\n");
-
-  for(i = error_median; i < 200-1-error_median; i++) {
-    for(k = 0; k < 2 * error_median + 1; k++) {
-      nou = tots[i - error_median + k];
-      if (k==0){
-        buff_median[k] = nou;
-      } else {
-        for(l=0; l < k; l++){
-          if(nou < buff_median[l]) break; //s'ha de ficar a la posició l
-        }
-        for (j = l ; j <= k; l++) {
-          a = buff_median[l];
-          buff_median[l] = nou;
-          nou = a;
-        }
-      }
-    }
-  
-    for (i = 0; i < 2*error_median + 1; i++)
-      printf("%i ",tots[i]);
-    printf("\n");
-    tots[i] = buffer_median[error_median];
-  }
-  */
-
+  //Escojer estado en funcion del vector de unos y ceros filtrado
   int canvis[50],cont=0;
   for(i = 0; i < t-1; i++){
     if (estats_filtrats[i] + estats_filtrats[i+1] == 1) {
@@ -221,21 +170,11 @@ int main(int argc, char *argv[]) {
       cont++;
     }
   }
-  float t_final = t * frame_duration + n_read / (float) sf_info.samplerate;
-  //printf("Duració audio: %f", t_final );
+  t_final = t * frame_duration + n_read / (float) sf_info.samplerate;
 
-  /*
-  printf("\n\nTots filtrat\n");
-  for (i = 0; i < t; i++)
-    printf("%i",estats_filtrats[i]);
-  printf("\nCanvis\n");
-  for (i = 0; i < cont; i++)
-    printf("%i-",canvis[i]);
-  */
   state = vad_close(vad_data);
 
   /* TODO: what do you want to print, for last frames? */
-  
   fprintf(vadfile, "0.00000\t%.5f\t%s\n", canvis[0] * frame_duration, state2str(1));
   for(i = 0; i < cont - 1; i++){
     fprintf(vadfile, "%.5f\t%.5f\t%s\n", canvis[i] * frame_duration, canvis[i+1] * frame_duration, state2str(estats_filtrats[canvis[i]]+1));    
