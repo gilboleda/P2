@@ -135,6 +135,7 @@ int main(int argc, char *argv[]) {
 
     /* TODO: print only SILENCE and VOICE labels */
     /* As it is, it prints UNDEF segments but is should be merge to the proper value */
+    /* DONE - Ejercicio ampliación*/
     if (sndfile_out != 0) {
       if (state == ST_VOICE) {
         if ((n_write = sf_write_float(sndfile_out, buffer, frame_size)) != frame_size) break;
