@@ -110,10 +110,15 @@ Ejercicios
 
 	* Incremento del nivel potencia en dB, respecto al nivel correspondiente al silencio inicial, para
 	  estar seguros de que un segmento de señal se corresponde con voz.
+	  Para el caso de nuestro audio, el valor es de -40dB pero para un caso generico lo hemos hecho haciendo el 14%
+	  del valor entre el valor máximo y mínimo de la potencia.
 
-	* Duración mínima razonable de los segmentos de voz y silencio.
+	* Duración mínima razonable de los segmentos de voz y silencio. 
+	  Hemos hecho que el tiempo sea 114ms.
 
 	* ¿Es capaz de sacar alguna conclusión a partir de la evolución de la tasa de cruces por cero?
+	   Hemos visualizado con el wavesurfer la tasa de cruzes por zero de una señal junto a las etiquetas, hemos creido
+	   que no nos proporcionava demasiada información por lo tanto es una característica que no hemos usado.
 
 
 ### Desarrollo del detector de actividad vocal
