@@ -108,10 +108,11 @@ int main(int argc, char *argv[]) {
 
   estats            = (int *) malloc(t * sizeof(int));
   estats_filtrats   = (int *) malloc(t * sizeof(int));
+  //t_final = t * 
 
 
   for(k = 0; k < num_maxs; k++) vad_data->pmax = vad_data->pmax + pmax[k]/num_maxs;
-  printf("PMAX - %f\n", vad_data->pmax);
+  //printf("PMAX - %f\n", vad_data->pmax);
 
   //tanquem l'audio i el tronem a obrir
   //podem substituir amb la funcio sf_seek() pero no ens sortia i voliem seguir provant
@@ -129,7 +130,7 @@ int main(int argc, char *argv[]) {
 
     state = vad(vad_data, buffer);
     //printf("Fins aqui\n");
-    tots[t] = (state == ST_VOICE) ? 1 : 0;
+    //tots[t] = (state == ST_VOICE) ? 1 : 0;
     estats[t] = (state == ST_VOICE) ? 1 : 0;  
     //printf("%i", tots[t]);
     //tots[trama] = state;
@@ -137,13 +138,14 @@ int main(int argc, char *argv[]) {
 
     /* TODO: print only SILENCE and VOICE labels */
     /* As it is, it prints UNDEF segments but is should be merge to the proper value */
+    /*
     if (state != last_state) {
       if (t != last_t && (state == ST_SILENCE || state == ST_VOICE))
         fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration, state2str(last_state));
       last_state = state;
       last_t = t;
     }
-
+  */
     if (sndfile_out != 0) {
       if (state == ST_VOICE) {
         if ((n_write = sf_write_float(sndfile_out, buffer, frame_size)) != frame_size) break;
@@ -166,10 +168,8 @@ int main(int argc, char *argv[]) {
   for (i = 0; i < error_median; i++){
     estats_filtrats[i] = estats[i];
   }
-
-
   for (k = 0; k < 2 * error_median + 1; k++) {
-    buffer_median[k] = tots[k];
+    buffer_median[k] = estats[k];
   }
   j = 0;
   for(i = error_median; i < t-1-error_median; i++) {
@@ -181,7 +181,7 @@ int main(int argc, char *argv[]) {
     mitjana = 0;
     //printf(" - %i\n",estats_filtrats[i]);
     j = (j+1) % (2*error_median+1);
-    buffer_median[j] = tots[i];
+    buffer_median[j] = estats[i];
   }
 
 /* Codi a mitges per fer un filtre de mediana real, no un apaño només per a zeros i uns, no cal acabar, tampoc funciona bé
@@ -213,26 +213,33 @@ int main(int argc, char *argv[]) {
   }
   */
 
-/*
-  printf("\n\nTots filtrat\n");
-  for (i = 0; i < t; i++)
-    printf("%i",estats_filtrats[i]);
-*/
-
-
-  state = vad_close(vad_data);
   int canvis[50],cont=0;
-  /* TODO: what do you want to print, for last frames? */
   for(i = 0; i < t-1; i++){
     if (estats_filtrats[i] + estats_filtrats[i+1] == 1) {
-      canvis[cont] = i;
+      canvis[cont] = i + 1;
       cont++;
     }
   }
+  float t_final = t * frame_duration + n_read / (float) sf_info.samplerate;
+  //printf("Duració audio: %f", t_final );
+
+  /*
+  printf("\n\nTots filtrat\n");
+  for (i = 0; i < t; i++)
+    printf("%i",estats_filtrats[i]);
+  printf("\nCanvis\n");
+  for (i = 0; i < cont; i++)
+    printf("%i-",canvis[i]);
+  */
+  state = vad_close(vad_data);
+
+  /* TODO: what do you want to print, for last frames? */
+  
+  fprintf(vadfile, "0.00000\t%.5f\t%s\n", canvis[0] * frame_duration, state2str(1));
   for(i = 0; i < cont - 1; i++){
     fprintf(vadfile, "%.5f\t%.5f\t%s\n", canvis[i] * frame_duration, canvis[i+1] * frame_duration, state2str(estats_filtrats[canvis[i]]+1));    
   }
-  
+  fprintf(vadfile, "%.5f\t%.5f\t%s\n", canvis[i] * frame_duration, t_final, state2str(estats_filtrats[canvis[i]]+1));
   /*
   if (t != last_t)
     fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration + n_read / (float) sf_info.samplerate, state2str(state));
