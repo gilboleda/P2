@@ -110,10 +110,15 @@ Ejercicios
 
 	* Incremento del nivel potencia en dB, respecto al nivel correspondiente al silencio inicial, para
 	  estar seguros de que un segmento de señal se corresponde con voz.
+	  Para el caso de nuestro audio, el valor es de -40dB pero para un caso generico lo hemos hecho haciendo el 14%
+	  del valor entre el valor máximo y mínimo de la potencia.
 
-	* Duración mínima razonable de los segmentos de voz y silencio.
+	* Duración mínima razonable de los segmentos de voz y silencio. 
+	  Hemos hecho que el tiempo sea 114ms.
 
 	* ¿Es capaz de sacar alguna conclusión a partir de la evolución de la tasa de cruces por cero?
+	   Hemos visualizado con el wavesurfer la tasa de cruzes por zero de una señal junto a las etiquetas, hemos creido
+	   que no nos proporcionava demasiada información por lo tanto es una característica que no hemos usado.
 
 
 ### Desarrollo del detector de actividad vocal
@@ -123,13 +128,16 @@ Ejercicios
 
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 
-
-
+  ******estas y todas las imagenes requeridas de la realización de la practica se encuentran en la carpeta
+ 	img de este repositorio*****
+  
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
+  Hay un pequeño error el la detección automática y por lo tanto no coinciden perfectamente.
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
   el resumen).
+  Evaluando sobre esta base de datos hemos conseguido una tasa de 95.479%
 
 
 ### Trabajos de ampliación
@@ -150,6 +158,8 @@ Ejercicios
 
 - Indique a continuación si ha realizado algún tipo de aportación suplementaria (algoritmos de detección o 
   parámetros alternativos, etc.).
+  Hemos aplicado un post-procesado con un filtro de mediana para un cierto numero n de tramas que nos corrige 
+  2*n +1 tramas.
 
 - Si lo desea, puede realizar también algún comentario acerca de la realización de la práctica que
   considere de interés de cara a su evaluación.
