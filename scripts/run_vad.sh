@@ -1,10 +1,15 @@
 #!/bin/bash
 if [ $# -ne 2 ]; then
-    echo "Usage: $0 alpha1 alpha2"
-    exit -1
+    alpha1=0.14
+    alpha2=0.78
+    #echo "Usage: $0 alpha1 alpha2"
+    #exit -1
+else
+    alpha1=$1
+    alpha2=$2
 fi
-alpha1=$1
-alpha2=$2
+#alpha1=$1
+#alpha2=$2
 # Be sure that this file has execution permissions:
 # Use the nautilus explorer or chmod +x run_vad.sh
 

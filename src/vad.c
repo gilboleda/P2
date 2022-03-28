@@ -123,7 +123,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
   case ST_UNDEF:
     break;
-
+/*
   case ST_MAYBE:
     if (f.p > vad_data->p2) { //condicion para ir de maybe voice a voice 
       vad_data->state = ST_VOICE;
@@ -131,15 +131,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
       vad_data->state = ST_SILENCE;
     } //sino se queda en Maybe silence
     break;
-
-/*  case ST_MAYBE_S:
-    if (f.p > vad_data->p1) { //condicion para ir de maybe silence a voice 
-      vad_data->state = ST_VOICE;
-    } else if (f.p > vad_data->p1) { //condicion para ir de maybe silence a silence
-      vad_data->state = ST_SILENCE;
-    } //sino se queda en Maybe silence
-    break;
-*/
+    */
   }
   if (vad_data->state == ST_SILENCE ||
       vad_data->state == ST_VOICE ||

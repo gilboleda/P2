@@ -43,6 +43,8 @@ int main(int argc, char *argv[]) {
   output_wav = args.output_wav;
   alpha1 = atof(args.alpha1);
   alpha2 = atof(args.alpha2);
+  alpha1 = 0.14;
+  alpha2 = 0.78;
 
   if (input_wav == 0 || output_vad == 0) {
     fprintf(stderr, "%s\n", args.usage_pattern);
