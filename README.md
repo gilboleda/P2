@@ -107,7 +107,7 @@ Ejercicios
   
   Contorno de potencia
   
-  ![Imagte 1](img/WS_S1_P_L.PNG)
+  
   
   Tasa de cruces por cero
   
@@ -137,8 +137,10 @@ Ejercicios
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 
   
+  ![Imagte 1](img/WS_S1_P_L.PNG)
   
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
+
   Hay un pequeño error el la detección automática y por lo tanto no coinciden perfectamente.
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
