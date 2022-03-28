@@ -18,7 +18,7 @@ float power_init_avg = 0;
 */
 
 const char *state_str[] = {
-  "UNDEF", "S", "V", "INIT", "S"
+  "UNDEF", "S", "V", "INIT",
 };
 
 const char *state2str(VAD_STATE st) {
@@ -134,8 +134,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     */
   }
   if (vad_data->state == ST_SILENCE ||
-      vad_data->state == ST_VOICE ||
-      vad_data->state == ST_MAYBE) //despues se quita
+      vad_data->state == ST_VOICE)
     return vad_data->state;
   else if (vad_data->state == ST_INIT)
     return ST_SILENCE;
