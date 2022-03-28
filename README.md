@@ -105,7 +105,13 @@ Ejercicios
   continuación, una captura de `wavesurfer` en la que se vea con claridad la señal temporal, el contorno de
   potencia y la tasa de cruces por cero, junto con el etiquetado manual de los segmentos.
   
-  ![alt text](https://github.com/gilboleda/P2/blob/boleda-marin/WS_S1_P_L.jpg?raw=true)
+  Contorno de potencia
+  
+  ![Imagte 1](img/WS_S1_P_L.PNG)
+  
+  Tasa de cruces por cero
+  
+  ![Imagte 2](img/WS_S1_Z.PNG)
 
 
 - A la vista de la gráfica, indique qué valores considera adecuados para las magnitudes siguientes:
@@ -130,8 +136,7 @@ Ejercicios
 
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 
-  ******estas y todas las imagenes requeridas de la realización de la practica se encuentran en la carpeta
- 	img de este repositorio*****
+  
   
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
   Hay un pequeño error el la detección automática y por lo tanto no coinciden perfectamente.
