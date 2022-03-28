@@ -107,7 +107,7 @@ Ejercicios
   
   Contorno de potencia
   
-  
+  ![Imagte 2](img/vamos_R4F4.PNG)
   
   Tasa de cruces por cero
   
@@ -156,11 +156,15 @@ Ejercicios
 - Si ha desarrollado el algoritmo para la cancelación de los segmentos de silencio, inserte una gráfica en
   la que se vea con claridad la señal antes y después de la cancelación (puede que `wavesurfer` no sea la
   mejor opción para esto, ya que no es capaz de visualizar varias señales al mismo tiempo).
+  
+  ![Imagte 1](img/Output audio without silence.PNG)
 
 #### Gestión de las opciones del programa usando `docopt_c`
 
 - Si ha usado `docopt_c` para realizar la gestión de las opciones y argumentos del programa `vad`, inserte
   una captura de pantalla en la que se vea el mensaje de ayuda del programa.
+  
+  ![Imagte 1](img/opcions_docopt.PNG)
 
 
 ### Contribuciones adicionales y/o comentarios acerca de la práctica
