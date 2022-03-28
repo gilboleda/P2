@@ -147,6 +147,8 @@ Ejercicios
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
   el resumen).
   Evaluando sobre esta base de datos hemos conseguido una tasa de 95.479%
+  
+  ![Imagte 2](img/recall_prec_punt.PNG)
 
 
 ### Trabajos de ampliación
