@@ -157,7 +157,8 @@ Ejercicios
   la que se vea con claridad la señal antes y después de la cancelación (puede que `wavesurfer` no sea la
   mejor opción para esto, ya que no es capaz de visualizar varias señales al mismo tiempo).
   
-  ![Imagte 1](img/Output audio without silence.PNG)
+  ![Imagte 1](img/audio_no_silence.PNG)
+  
 
 #### Gestión de las opciones del programa usando `docopt_c`
 
