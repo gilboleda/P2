@@ -107,7 +107,7 @@ Ejercicios
   
   
   
-  -Contorno de potencia
+  Contorno de potencia
   
   ![Imagte 2](img/vamos_R4F4.PNG)
   
