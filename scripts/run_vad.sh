@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $# -ne 2 ]; then
-    alpha1=0.14
-    alpha2=0.78
+    alpha1="0.14"
+    alpha2="0.78"
     #echo "Usage: $0 alpha1 alpha2"
     #exit -1
 else
