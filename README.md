@@ -105,6 +105,8 @@ Ejercicios
   continuación, una captura de `wavesurfer` en la que se vea con claridad la señal temporal, el contorno de
   potencia y la tasa de cruces por cero, junto con el etiquetado manual de los segmentos.
   
+  ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) `#f03c15`
+  
   Contorno de potencia
   
   ![Imagte 2](img/vamos_R4F4.PNG)
